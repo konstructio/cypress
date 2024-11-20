@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["es5", "dom"],
+    "types": ["cypress", "node","@testing-library/cypress"]
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "custom.d.ts", ".next/types/**/*.ts", "checkStatus.ts"],
+  "exclude": ["node_modules", "dist", "server.js", "tests", "**/*.test.*", "**/*.spec.ts", ".next"]
+}
