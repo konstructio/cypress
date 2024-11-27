@@ -2,8 +2,9 @@ name: "Run check: Build image"
 
 on:
   push:
-    branches:
-      - '!main'
+    branches-ignore:
+      - main
+  workflow_dispatch:
 
 permissions:
   packages: write
