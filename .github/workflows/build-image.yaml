@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - action-build-docker
+      - action-build-docer
 
 permissions:
   packages: write
