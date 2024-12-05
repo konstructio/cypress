@@ -1,8 +1,15 @@
-const { defineConfig } = require("cypress");
-require('dotenv').config();
+import { defineConfig } from "cypress";
+import * as dotenv from "dotenv";
 
-module.exports = defineConfig({
+dotenv.config();
+
+export default defineConfig({
   e2e: {
+    baseUrl: process.env.CLUSTER_DOMAIN,
+    env: {
+      USERNAME: process.env.USERNAME,
+      PASSWORD: process.env.PASSWORD,
+    },
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },
@@ -10,4 +17,3 @@ module.exports = defineConfig({
     viewportHeight: 900,
   },
 });
-

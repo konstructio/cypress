@@ -9,6 +9,6 @@
     "dotenv": "^16.4.5"
   },
   "scripts": {
-    
+    "open": "cypress open"
   }
 }
