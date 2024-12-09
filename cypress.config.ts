@@ -10,10 +10,8 @@ export default defineConfig({
       USERNAME: process.env.USERNAME,
       PASSWORD: process.env.PASSWORD,
     },
-    setupNodeEvents(on, config) {
-      // implement node event listeners here
-    },
     viewportWidth: 2000,
     viewportHeight: 900,
+    supportFile: "cypress/support/e2e.ts",
   },
 });

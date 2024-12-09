@@ -1,14 +1,16 @@
 {
   "devDependencies": {
     "@testing-library/cypress": "^10.0.2",
-    "cypress": "^13.13.2",
-    "typescript": "^5.5.4"
+    "cypress": "^13.16.1",
+    "typescript": "^5.7.2"
   },
   "dependencies": {
-    "axios": "^1.7.3",
-    "dotenv": "^16.4.5"
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7"
   },
   "scripts": {
-    "open": "cypress open"
+    "deps:update": "npx npm-check-updates --interactive --format group",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run"
   }
 }
