@@ -2,11 +2,6 @@ import "@testing-library/cypress/add-commands";
 declare global {
   namespace Cypress {
     interface Chainable<Subject = any> {
-      /**
-       * Custom command to perform login.
-       * @param username - The username for login
-       * @param password - The password for login
-       */
       login(username: string, password: string): Chainable<void>;
       goApplications(): Chainable<void>;
     }
