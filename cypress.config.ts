@@ -9,9 +9,14 @@ export default defineConfig({
     env: {
       USERNAME: process.env.USERNAME,
       PASSWORD: process.env.PASSWORD,
+      RETRY_DELAY: process.env.RETRY_DELAY || 10000,
     },
     viewportWidth: 2000,
     viewportHeight: 900,
     supportFile: "cypress/support/e2e.ts",
+    retries: {
+      runMode: 3,
+      openMode: 0,
+    },
   },
 });
