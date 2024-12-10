@@ -1,12 +1,13 @@
-describe("Test Login", () => {
-  it("should do a login and validate cluster data", async () => {
+describe("Test atlantis is working correctly", () => {
+  before(() => {
     const username = Cypress.env("USERNAME");
     const password = Cypress.env("PASSWORD");
 
     cy.login(username, password);
+  });
 
+  beforeEach(() => {
     cy.wait(2000);
-
     cy.request({
       method: "GET",
       url: "/api/proxy?url=%2Fcluster",
@@ -24,10 +25,12 @@ describe("Test Login", () => {
       expect(cluster.git_auth).to.have.property("git_token");
       expect(cluster.git_auth).to.have.property("git_owner");
 
-      cy.wrap(cluster).as("cluster");
+      cy.wrap(cluster).as("clusterData");
     });
+  });
 
-    cy.get("@cluster").then((cluster: any) => {
+  it("should do a login and validate cluster data", async () => {
+    cy.get("@clusterData").then((cluster: any) => {
       const { subdomain_name: subdomain, domain_name: domain } = cluster;
 
       if (subdomain) {
