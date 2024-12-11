@@ -1,7 +1,5 @@
 import { defineConfig } from "cypress";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 export default defineConfig({
   e2e: {
@@ -10,6 +8,8 @@ export default defineConfig({
       USERNAME: process.env.USERNAME,
       PASSWORD: process.env.PASSWORD,
       RETRY_DELAY: process.env.RETRY_DELAY || 10000,
+      CLOUD_PROVIDER: process.env.CLOUD_PROVIDER,
+      MAX_TIME_TO_WAIT: process.env.MAX_TIME_TO_WAIT || "1h",
     },
     viewportWidth: 2000,
     viewportHeight: 900,

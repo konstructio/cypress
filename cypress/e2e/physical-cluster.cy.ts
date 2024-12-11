@@ -1,11 +1,17 @@
+import ms from "ms";
+
 import { Account } from "../../types/accouts";
+
+const CLUSTER_NAME = "test-cluster";
+const isAWS = Cypress.env("CLOUD_PROVIDER") === "aws";
+const MAX_TIME_TO_WAIT = Cypress.env("MAX_TIME_TO_WAIT");
 
 // Utility function to fill out the form to create a physical cluster
 const fillOutForm = () => {
   cy.get("form").as("form");
   cy.get("@form").should("exist");
 
-  cy.findByRole("textbox").type("test-cluster", {
+  cy.findByRole("textbox").type(CLUSTER_NAME, {
     delay: 10,
   });
 
@@ -44,42 +50,84 @@ describe("Test to validate physical cluster creation", () => {
     cy.login(username, password);
   });
 
-  it("should create a physical cluster", () => {
-    cy.visit("/");
-    cy.findByRole("button", { name: /add workload cluster/i }).as("button");
+  if (isAWS) {
+    it("should create a physical cluster", () => {
+      cy.visit("/");
+      cy.findByRole("button", { name: /add workload cluster/i }).as("button");
 
-    cy.request("GET", "/api/proxy?url=%2Fcloud-account").then(
-      ({ status, body }) => {
-        expect(status).to.eq(200);
+      cy.request("GET", "/api/proxy?url=%2Fcloud-account").then(
+        ({ status, body }) => {
+          expect(status).to.eq(200);
 
-        const { cloud_accounts: cloudAccounts } = body;
-        cy.wrap(cloudAccounts as Account[]).as("accounts");
-      }
-    );
-
-    cy.get("@accounts").then((accounts) => {
-      const cloudAccounts = accounts as unknown as Account[];
-      expect(cloudAccounts).to.be.an("array");
-      expect(cloudAccounts).to.have.length.greaterThan(0);
-
-      const defaultAccount = cloudAccounts.find(
-        (account) => account.name === "default"
+          const { cloud_accounts: cloudAccounts } = body;
+          cy.wrap(cloudAccounts as Account[]).as("accounts");
+        }
       );
 
-      expect(defaultAccount).to.exist;
+      cy.get("@accounts").then((accounts) => {
+        const cloudAccounts = accounts as unknown as Account[];
+        expect(cloudAccounts).to.be.an("array");
+        expect(cloudAccounts).to.have.length.greaterThan(0);
+
+        const defaultAccount = cloudAccounts.find(
+          (account) => account.name === "default"
+        );
+
+        expect(defaultAccount).to.exist;
+      });
+
+      cy.get("@button").click();
+
+      fillOutForm();
+
+      cy.findByRole("button", {
+        name: /create cluster/i,
+      }).click();
+
+      cy.wait(2000);
+
+      cy.findByRole("heading", { name: new RegExp(CLUSTER_NAME, "i") }).should(
+        "exist"
+      );
+      cy.contains("Provisioning").should("exist");
     });
 
-    cy.get("@button").click();
+    it("should validate the cluster is provisioning", () => {
+      cy.visit("/");
 
-    fillOutForm();
+      cy.goClusterManagement();
 
-    cy.findByRole("button", {
-      name: /create cluster/i,
-    }).click();
+      cy.findAllByRole("button", { name: new RegExp(CLUSTER_NAME, "i") })
+        .eq(0)
+        .as("clusterProvisioningButton");
 
-    cy.wait(2000);
+      cy.get("@clusterProvisioningButton").should("exist");
 
-    cy.findByRole("heading", { name: /test-cluster/i }).should("exist");
-    cy.contains("Provisioning").should("exist");
-  });
+      cy.get("@clusterProvisioningButton").within(() => {
+        cy.findByText(/provisioning/i).should("exist");
+      });
+    });
+
+    it("should validate the cluster is provisioned", { retries: 3 }, () => {
+      cy.visit("/");
+
+      cy.goClusterManagement();
+
+      cy.findAllByRole("button", { name: new RegExp(CLUSTER_NAME, "i") })
+        .eq(0)
+        .as("clusterProvisionedButton");
+
+      cy.get("@clusterProvisionedButton").should("exist");
+
+      cy.get("@clusterProvisionedButton").within(() => {
+        cy.findByText(/provisioned/i, {
+          timeout: Number(ms(MAX_TIME_TO_WAIT)),
+        }).should("exist");
+      });
+    });
+  } else {
+    it("Test not run because the cloud provider is not AWS", () => {
+      cy.log("Skipping test because the cloud provider is not AWS");
+    });
+  }
 });
