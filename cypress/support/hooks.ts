@@ -1,7 +1,6 @@
 afterEach(function () {
-  if (this.currentTest.state === "failed") {
-    const retryDelay = Cypress.env("RETRY_DELAY");
-
-    cy.wait(+retryDelay);
-  }
+  // if (this.currentTest.isFailed()) {
+  //   const retryDelay = Cypress.env("RETRY_DELAY");
+  //   cy.wait(+retryDelay);
+  // }
 });
