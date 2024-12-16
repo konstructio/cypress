@@ -15,8 +15,8 @@ export default defineConfig({
     viewportHeight: 900,
     supportFile: "cypress/support/e2e.ts",
     retries: {
-      runMode: 3,
-      openMode: 0,
+      runMode: +process.env.RETRIES_RUN_MODE || 1,
+      openMode: +process.env.RETRIES_OPEN_MODE || 0,
     },
   },
 });
