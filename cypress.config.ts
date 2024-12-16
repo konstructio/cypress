@@ -1,6 +1,11 @@
 import { defineConfig } from "cypress";
 import "dotenv/config";
 
+import {
+  createAtlantisPullRequestOnGithub,
+  applyAtlantisPlan,
+} from "./cypress/utils/github";
+
 export default defineConfig({
   e2e: {
     baseUrl: process.env.CLUSTER_DOMAIN,
@@ -18,6 +23,12 @@ export default defineConfig({
     retries: {
       runMode: +process.env.RETRIES_RUN_MODE || 1,
       openMode: +process.env.RETRIES_OPEN_MODE || 0,
+    },
+    setupNodeEvents(on) {
+      on("task", {
+        createAtlantisPullRequestOnGithub,
+        applyAtlantisPlan,
+      });
     },
   },
 });
