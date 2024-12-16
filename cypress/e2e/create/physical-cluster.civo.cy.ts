@@ -4,7 +4,7 @@ import { Account } from "../../../types/accouts";
 
 import { fillOutForm } from "../../utils";
 
-const CLUSTER_NAME = "test-cluster";
+const CLUSTER_NAME = Cypress.env("CLUSTER_NAME");
 const isCivo = Cypress.env("CLOUD_PROVIDER") === "civo";
 const MAX_TIME_TO_WAIT = Cypress.env("MAX_TIME_TO_WAIT");
 

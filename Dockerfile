@@ -14,5 +14,5 @@ COPY ./tsconfig.json .
 RUN npm install
 
 # Define the entrypoint for running Cypress tests
-ENTRYPOINT ["npm", "run", "cy:run"]
+ENTRYPOINT ["npx", "cypress", "run"]
 

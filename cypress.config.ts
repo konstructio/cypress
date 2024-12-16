@@ -10,6 +10,7 @@ export default defineConfig({
       RETRY_DELAY: process.env.RETRY_DELAY || 10000,
       CLOUD_PROVIDER: process.env.CLOUD_PROVIDER,
       MAX_TIME_TO_WAIT: process.env.MAX_TIME_TO_WAIT || "1h",
+      CLUSTER_NAME: process.env.CLUSTER_NAME || "test-cluster",
     },
     viewportWidth: 2000,
     viewportHeight: 900,
