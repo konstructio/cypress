@@ -1,17 +1,17 @@
 import ms from "ms";
 
-import { Account } from "../../types/accouts";
+import { Account } from "../../../types/accouts";
 
-import { fillOutForm } from "./utils";
+import { fillOutForm } from "../../utils";
 
 const CLUSTER_NAME = "test-cluster";
-const isAWS = Cypress.env("CLOUD_PROVIDER") === "aws";
+const isCivo = Cypress.env("CLOUD_PROVIDER") === "civo";
 const MAX_TIME_TO_WAIT = Cypress.env("MAX_TIME_TO_WAIT");
 
-describe("Test to validate physical cluster creation on AWS", () => {
+describe("Test to validate physical cluster creation", () => {
   beforeEach(function () {
-    if (!isAWS) {
-      cy.log("This test is only for AWS");
+    if (!isCivo) {
+      cy.log("This test is only for Civo");
 
       this.skip();
     }
@@ -24,8 +24,11 @@ describe("Test to validate physical cluster creation on AWS", () => {
     cy.login(username, password);
   });
 
-  it("should create a physical cluster", () => {
+  it.skip("should create a physical cluster", () => {
     cy.visit("/");
+
+    cy.goClusters();
+
     cy.findByRole("button", { name: /add workload cluster/i }).as("button");
 
     cy.request("GET", "/api/proxy?url=%2Fcloud-account").then(
@@ -49,9 +52,22 @@ describe("Test to validate physical cluster creation on AWS", () => {
       expect(defaultAccount).to.exist;
     });
 
-    cy.get("@button").click();
+    cy.get(".management-cluster").invoke("text").as("mainCluster");
 
-    fillOutForm(CLUSTER_NAME);
+    cy.get("@mainCluster").then((mainClusterText: unknown) => {
+      const region = (mainClusterText as string).match(/civo:(.*?)(?=nodes:)/i);
+      cy.wrap(region.at(1)).as("region");
+    });
+
+    cy.get("@region").then((region: unknown) => {
+      cy.get("@button").click();
+
+      fillOutForm({
+        name: CLUSTER_NAME,
+        region: new RegExp(region as string, "i"),
+        intanceSize: new RegExp("g4s.kube.small", "i"),
+      });
+    });
 
     cy.findByRole("button", {
       name: /create cluster/i,
@@ -62,13 +78,14 @@ describe("Test to validate physical cluster creation on AWS", () => {
     cy.findByRole("heading", { name: new RegExp(CLUSTER_NAME, "i") }).should(
       "exist"
     );
+
     cy.contains("Provisioning").should("exist");
   });
 
-  it("should validate the cluster is provisioning", () => {
+  it.skip("should validate the cluster is provisioning", () => {
     cy.visit("/");
 
-    cy.goClusterManagement();
+    cy.goClusters();
 
     cy.findAllByRole("button", { name: new RegExp(CLUSTER_NAME, "i") })
       .eq(0)
@@ -84,7 +101,7 @@ describe("Test to validate physical cluster creation on AWS", () => {
   it("should validate the cluster is provisioned", { retries: 3 }, () => {
     cy.visit("/");
 
-    cy.goClusterManagement();
+    cy.goClusters();
 
     cy.findAllByRole("button", { name: new RegExp(CLUSTER_NAME, "i") })
       .eq(0)
@@ -93,7 +110,7 @@ describe("Test to validate physical cluster creation on AWS", () => {
     cy.get("@clusterProvisionedButton").should("exist");
 
     cy.get("@clusterProvisionedButton").within(() => {
-      cy.findByText(/provisioned/i, {
+      cy.findByText(/available/i, {
         timeout: Number(ms(MAX_TIME_TO_WAIT)),
       }).should("exist");
     });

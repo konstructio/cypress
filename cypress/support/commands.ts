@@ -4,7 +4,7 @@ declare global {
     interface Chainable<Subject = any> {
       login(username: string, password: string): Chainable<void>;
       goApplications(): Chainable<void>;
-      goClusterManagement(): Chainable<void>;
+      goClusters(): Chainable<void>;
     }
   }
 }
@@ -38,7 +38,7 @@ Cypress.Commands.add("goApplications", () => {
   cy.findByRole("link", { name: /applications/i }).click();
 });
 
-Cypress.Commands.add("goClusterManagement", () => {
+Cypress.Commands.add("goClusters", () => {
   cy.visit("/");
-  cy.findByRole("link", { name: /cluster management/i }).click();
+  cy.findByRole("link", { name: /clusters/i }).click();
 });
