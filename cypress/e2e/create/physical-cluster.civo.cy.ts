@@ -24,7 +24,7 @@ describe("Test to validate physical cluster creation", () => {
     cy.login(username, password);
   });
 
-  it.skip("should create a physical cluster", () => {
+  it("should create a physical cluster", () => {
     cy.visit("/");
 
     cy.goClusters();
