@@ -13,7 +13,7 @@ export default defineConfig({
     env: {
       USERNAME: process.env.USERNAME,
       PASSWORD: process.env.PASSWORD,
-      RETRY_DELAY: process.env.RETRY_DELAY || 10000,
+      RETRY_DELAY: process.env.RETRY_DELAY || "10s",
       CLOUD_PROVIDER: process.env.CLOUD_PROVIDER,
       MAX_TIME_TO_WAIT: process.env.MAX_TIME_TO_WAIT || "1h",
       CLUSTER_NAME: process.env.CLUSTER_NAME || "test-cluster",
