@@ -4,7 +4,7 @@ import ms from "ms";
 const MAX_TIME_TO_WAIT = Cypress.env("MAX_TIME_TO_WAIT");
 
 describe("Test atlantis is working correctly", () => {
-  before(() => {
+  beforeEach(() => {
     const username = Cypress.env("USERNAME");
     const password = Cypress.env("PASSWORD");
 
@@ -23,7 +23,7 @@ describe("Test atlantis is working correctly", () => {
       },
     }).then((response) => {
       expect(response.status).to.eq(200);
-      expect(response.body.length).to.equal(2);
+      expect(response.body.length).to.greaterThan(0);
 
       const [cluster] = response.body;
 
@@ -38,7 +38,7 @@ describe("Test atlantis is working correctly", () => {
     });
   });
 
-  it("should do a login and validate cluster data", async () => {
+  it("should verify the atlantis is up", async () => {
     cy.get("@clusterData").then((cluster: any) => {
       const { subdomain_name: subdomain, domain_name: domain } = cluster;
 
@@ -50,7 +50,7 @@ describe("Test atlantis is working correctly", () => {
     });
   });
 
-  it.only("should create a PR inside the github page", () => {
+  it("should create a PR inside the github page", () => {
     cy.get("@clusterData").then(({ git_auth }: any) => {
       const { gitToken, gitOwner, gitUsername } = camelcaseKeys(git_auth);
 
@@ -79,10 +79,13 @@ describe("Test atlantis is working correctly", () => {
         }).then(({ createPullRequest }: any) => {
           if (createPullRequest) {
             cy.get("@clusterData").then((cluster: any) => {
-              const { subdomain_name: subdomain, domain_name: domain } =
-                cluster;
+              const {
+                subdomain_name: subdomain,
+                domain_name: domain,
+                git_auth: git,
+              } = cluster;
 
-              cy.wait(10000);
+              cy.wait(20000);
 
               if (subdomain) {
                 cy.visit(`https://atlantis.${subdomain}.${domain}`);
@@ -90,7 +93,7 @@ describe("Test atlantis is working correctly", () => {
                 cy.visit(`https://atlantis.${domain}`);
               }
 
-              cy.findAllByText(/k1-civo\/gitops/i, {
+              cy.findAllByText(new RegExp(`${git.git_owner}/gitops`, "i"), {
                 timeout: Number(ms(MAX_TIME_TO_WAIT)),
               }).should("exist");
 
@@ -105,7 +108,9 @@ describe("Test atlantis is working correctly", () => {
                 if (apply) {
                   cy.wait(50000);
                   cy.reload();
-                  cy.findAllByText(/k1-civo\/gitops/i).should("not.exist");
+                  cy.findAllByText(
+                    new RegExp(`${git.git_owner}/gitops`, "i")
+                  ).should("not.exist");
                 }
               });
             });

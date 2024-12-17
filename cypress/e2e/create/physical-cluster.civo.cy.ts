@@ -82,7 +82,7 @@ describe("Test to validate physical cluster creation", () => {
     cy.contains("Provisioning").should("exist");
   });
 
-  it.skip("should validate the cluster is provisioning", () => {
+  it("should validate the cluster is provisioning", () => {
     cy.visit("/");
 
     cy.goClusters();

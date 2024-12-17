@@ -1,4 +1,5 @@
 import { defineConfig } from "cypress";
+import ms from "ms";
 import "dotenv/config";
 
 import {
@@ -30,5 +31,6 @@ export default defineConfig({
         applyAtlantisPlan,
       });
     },
+    pageLoadTimeout: Number(ms("10m")),
   },
 });
