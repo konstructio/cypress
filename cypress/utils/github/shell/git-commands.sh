@@ -32,9 +32,30 @@ clone_repository() {
         rm -rf "gitops"
     fi
 
+
     echo "Setting git configuration..."
-    git config --global user.name "$git_owner"
-    git config --global user.email "kbot@konstruct.io"
+    DEFAULT_NAME=$git_owner
+    DEFAULT_EMAIL="kbot@konstruct.io"
+
+    USER_NAME=$(git config --global --get user.name)
+
+    if [ -z "$USER_NAME" ]; then
+        echo "No se encontró 'user.name'. Configurando el valor por defecto..."
+        git config --global user.name "$DEFAULT_NAME"
+        echo "'user.name' configurado como: $DEFAULT_NAME"
+    else
+        echo "'user.name' ya está configurado como: $USER_NAME"
+    fi
+
+    USER_EMAIL=$(git config --global --get user.email)
+
+    if [ -z "$USER_EMAIL" ]; then
+        echo "No se encontró 'user.email'. Configurando el valor por defecto..."
+        git config --global user.email "$DEFAULT_EMAIL"
+        echo "'user.email' configurado como: $DEFAULT_EMAIL"
+    else
+        echo "'user.email' ya está configurado como: $USER_EMAIL"
+    fi
 
     echo "Cloning repository..."
     gh repo clone "$url" gitops
