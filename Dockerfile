@@ -1,5 +1,5 @@
 # Use the Cypress image as the base image
-FROM cypress/included:13.16.1
+FROM cypress/included:13.17.0
 
 # Set the working directory
 WORKDIR /tests
