@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
+gitops
 
 # testing
 /coverage
@@ -43,6 +44,7 @@ storybook-static
 .yarnrc.yaml
 .yarnrc.yml
 yarn.lock
+token.txt
 
 cypress/screenshots/
 cypress/videos/
