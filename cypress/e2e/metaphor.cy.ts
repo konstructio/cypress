@@ -1,3 +1,7 @@
+import ms from "ms";
+
+const MAX_TIME_TO_WAIT = Cypress.env("MAX_TIME_TO_WAIT");
+
 // Utility functions
 const checkHrefAndRequest = (
   alias: string,
@@ -29,19 +33,28 @@ describe("Test metaphor is working correctly", () => {
   });
 
   it("should validate the metaphor development is working", () => {
-    cy.findByRole("link", { name: /metaphor-development/i }).as("development");
+    cy.findByRole("link", {
+      name: /metaphor-development/i,
+      timeout: Number(ms(MAX_TIME_TO_WAIT)),
+    }).as("development");
     cy.get("@development").as("link");
     checkHrefAndRequest("link", "development");
   });
 
   it("should validate the metaphor staging is working", () => {
-    cy.findByRole("link", { name: /metaphor-staging/i }).as("staging");
+    cy.findByRole("link", {
+      name: /metaphor-staging/i,
+      timeout: Number(ms(MAX_TIME_TO_WAIT)),
+    }).as("staging");
     cy.get("@staging").as("link");
     checkHrefAndRequest("link", "staging");
   });
 
   it("should validate the metaphor production is working", () => {
-    cy.findByRole("link", { name: /metaphor-production/i }).as("production");
+    cy.findByRole("link", {
+      name: /metaphor-production/i,
+      timeout: Number(ms(MAX_TIME_TO_WAIT)),
+    }).as("production");
     cy.get("@production").as("link");
     checkHrefAndRequest("link", "production");
   });
