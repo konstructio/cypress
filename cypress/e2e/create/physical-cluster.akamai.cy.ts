@@ -4,15 +4,15 @@ import { PhysicalCluster } from "../../utils/create-cluster/physical";
 
 const CLUSTER_NAME = Cypress.env("CLUSTER_NAME");
 const cloudProvider = Cypress.env("CLOUD_PROVIDER");
-const isCivo = cloudProvider === "civo";
 const MAX_TIME_TO_WAIT = Cypress.env("MAX_TIME_TO_WAIT");
+const isAkamai = cloudProvider === "akamai";
 
-describe("Test to validate physical cluster creation on CIVO", () => {
+describe("Test to validate physical cluster creation on AKAMAI", () => {
   const physicalCluster = new PhysicalCluster();
 
   beforeEach(function () {
-    if (!isCivo) {
-      cy.log("This test is only for Civo");
+    if (!isAkamai) {
+      cy.log("This test is only for AKAMAI");
 
       this.skip();
     }
@@ -29,41 +29,30 @@ describe("Test to validate physical cluster creation on CIVO", () => {
     physicalCluster.visitClusterPage();
 
     const workloadButton = physicalCluster.getWorkloadClusterButton();
-    const cloudAccounts = physicalCluster.getClodAccounts();
 
-    cloudAccounts.then((cloudAccounts) => {
-      expect(cloudAccounts).to.be.an("array");
-      expect(cloudAccounts).to.have.length.greaterThan(0);
+    workloadButton.click();
 
-      const defaultAccount = cloudAccounts.find(
-        (account) => account.name === "default"
-      );
+    const region = physicalCluster.getRegion(cloudProvider);
 
-      expect(defaultAccount).to.exist;
-
-      const region = physicalCluster.getRegion(cloudProvider);
-
-      workloadButton.click();
-
-      region.then((region) => {
-        physicalCluster.filloutCivoForm({
-          name: CLUSTER_NAME,
-          region: new RegExp(region, "i"),
-          intanceSize: new RegExp("g4s.kube.small", "i"),
-        });
-
-        const createCluterButton = physicalCluster.getButtonCreateCluster();
-
-        createCluterButton.click();
-
-        cy.wait(2000);
-
-        cy.findByRole("heading", {
-          name: new RegExp(CLUSTER_NAME, "i"),
-        }).should("exist");
-
-        cy.contains("Provisioning").should("exist");
+    region.then((region) => {
+      physicalCluster.filloutAkamaiForm({
+        name: CLUSTER_NAME,
+        region: new RegExp(region, "i"),
+        intanceSize: new RegExp("g6-standard-6", "i"),
       });
+
+      const createCluterButton = physicalCluster.getButtonCreateCluster();
+
+      createCluterButton.click();
+
+      cy.wait(2000);
+
+      cy.findByRole("heading", {
+        name: new RegExp(CLUSTER_NAME, "i"),
+        timeout: Number(ms(MAX_TIME_TO_WAIT)),
+      }).should("exist");
+
+      cy.contains("Provisioning").should("exist");
     });
   });
 
