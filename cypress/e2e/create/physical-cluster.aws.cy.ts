@@ -2,13 +2,15 @@ import ms from "ms";
 
 import { Account } from "../../../types/accouts";
 
-import { fillOutForm } from "../../utils";
+import { PhysicalCluster } from "../../utils/create-cluster/physical";
 
 const CLUSTER_NAME = Cypress.env("CLUSTER_NAME");
 const isAWS = Cypress.env("CLOUD_PROVIDER") === "aws";
 const MAX_TIME_TO_WAIT = Cypress.env("MAX_TIME_TO_WAIT");
 
 describe("Test to validate physical cluster creation on AWS", () => {
+  const physicalCluster = new PhysicalCluster();
+
   beforeEach(function () {
     if (!isAWS) {
       cy.log("This test is only for AWS");
@@ -21,7 +23,7 @@ describe("Test to validate physical cluster creation on AWS", () => {
     const username = Cypress.env("USERNAME");
     const password = Cypress.env("PASSWORD");
 
-    cy.login(username, password);
+    physicalCluster.login(username, password);
   });
 
   it("should create a physical cluster", () => {
@@ -51,7 +53,7 @@ describe("Test to validate physical cluster creation on AWS", () => {
 
     cy.get("@button").click();
 
-    fillOutForm({
+    physicalCluster.filloutAWSForm({
       name: CLUSTER_NAME,
       region: /us-east-1/i,
       intanceSize: /t2.nano/i,
